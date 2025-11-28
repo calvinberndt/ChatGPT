@@ -1,4 +1,5 @@
 import json
+import os
 
 def parse_chatgpt_conversation(json_data):
     """
@@ -53,15 +54,21 @@ def parse_chatgpt_conversation(json_data):
 # --- Usage Example ---
 
 # Assuming you saved your text block to 'ray_chat.json'
-with open('ray_chat.json', 'r', encoding='utf-8') as f:
+input_filename = 'ray_chat.json'
+with open(input_filename, 'r', encoding='utf-8') as f:
     raw_data = json.load(f)
 
 chats = parse_chatgpt_conversation(raw_data)
 
-# Print formatted output
-print(f"Title: {raw_data.get('title')}\n" + "="*30)
-for msg in chats:
-    role = msg['role'].upper()
-    print(f"\n[{role}]:")
-    print(f"{msg['text']}")
-    print("-" * 20)
+# Export formatted output to .txt file with same base name as input
+base_name = os.path.splitext(input_filename)[0]
+output_filename = f'{base_name}.txt'
+with open(output_filename, 'w', encoding='utf-8') as f:
+    f.write(f"Title: {raw_data.get('title')}\n" + "="*30 + "\n")
+    for msg in chats:
+        role = msg['role'].upper()
+        f.write(f"\n[{role}]:\n")
+        f.write(f"{msg['text']}\n")
+        f.write("-" * 20 + "\n")
+
+print(f"Output exported to {output_filename}")
